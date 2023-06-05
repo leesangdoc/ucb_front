@@ -6,6 +6,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 module.exports = 
     withBundleAnalyzer({
       // experimental: { appDir: true },
+      target: "server",
       reactStrictMode: true,
       swcMinify: true,
       async redirects(){
