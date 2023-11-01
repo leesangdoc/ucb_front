@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import React, { useEffect } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { useRouter, Router } from "next/router";
 import { myQuery } from '@/app/recoil/selectors/selectors';
 import { textState } from '@/app/recoil/atoms/atoms';
@@ -7,6 +7,11 @@ import { useRecoilValue, useRecoilState, useRecoilValueLoadable } from 'recoil';
 import {Layout} from "@/components/Layout";
 import { GetServerSideProps, NextPage } from 'next';
 import Contents, { ContentsProps } from '@/components/Contents';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale, setDefaultLocale } from  "react-datepicker";
+import ko from 'date-fns/locale/ko';
+registerLocale('ko', ko);
 
 interface boxOfficeResult {
   // boxofficeType: string;
@@ -17,6 +22,11 @@ interface boxOfficeResult {
 
 interface AxiosRecoilTestProps {
   data: boxOfficeResult;
+}
+
+interface ExampleCustomInputProps {
+  value: string;
+  onClick: () => void;
 }
 
 
@@ -34,13 +44,20 @@ function AxiosRecoilTest({ Component, pageProps }: AppProps) {
   },[])
   // const pageProps = { name: 'Green', mark: 'hihi' };
   // const router: Router = useRouter(); // Router 인스턴스를 생성해야 함
-
   // const router = useRouter();
+  const [startDate, setStartDate] = useState(new Date());
   const contentsProps: ContentsProps = {
     name: "Green"
     , mark: "hihi"
     //router: useRouter(),
   };
+  const handleCalendarClose = () => console.log("Calendar closed");
+  const handleCalendarOpen = () => console.log("Calendar opened");
+  const ExampleCustomInput = forwardRef<HTMLButtonElement, ExampleCustomInputProps>(({ value, onClick }, ref:any) => (
+    <button className="example-custom-input" onClick={onClick} ref={ref}>
+      {value}
+    </button>
+  ));
 
   switch (myQuery_.state) {
     case "hasValue":
@@ -59,11 +76,29 @@ function AxiosRecoilTest({ Component, pageProps }: AppProps) {
               return <div key={val.rank}>{val.rank}, {val.movieNm}, {val.openDt}, {val.showCnt}</div>
           })
         }
-      
+
 
       
       <Contents {...pageProps}{...contentsProps} />
-      
+      <DatePicker
+        showIcon
+        selected={startDate} 
+        onChange={(date) => setStartDate(date || new Date())} //only when value has changed
+        locale="ko"
+        // isClearable
+        placeholderText="YYYY-MM-DD"
+        dateFormat="yyyy-MM-dd"
+        // onSelect={handleDateSelect} //when day is clicked
+        // onCalendarClose={handleCalendarClose}
+        // onCalendarOpen={handleCalendarOpen}
+        closeOnScroll={true}
+        // closeOnScroll={(e) => e.target === document}
+        // customInput={<ExampleCustomInput value={""} onClick={function (): void {
+        //   throw new Error("Function not implemented.");
+        // } } />}
+      >
+        <div style={{ color: "red" }}>시작일자와 종료일자가 30일 이상 될 수 없습니다.</div>
+      </DatePicker>
 
 
       </Layout>

@@ -30,7 +30,7 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <p>dddttt</p>
+          
         </Head>
         <body>
           <Main />
